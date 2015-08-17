@@ -1,0 +1,351 @@
+//Importamos la libreria que se encargara de manipular la comunicacion por IR
+#include <IRremote.h>
+
+//Variable que se utilizara para poder guardar los valores de la fotorresistencia
+int valorLDR = 0;
+
+//Variable que se utiliza para poder manipular cada funcion
+long aux;
+
+//Pin donde ira el receptor IR
+int receptor = 13;
+
+//Pin analogico donde estara conectada la fotorresistencia
+int pinLDR = 1;
+
+//Se instancia la libreria y se crea un objeto
+IRrecv irrecv(receptor);
+
+//Variable que almacenara cada frecuencia enviada al IR
+decode_results resultados;
+
+//Pin donde esta conectado el sensor PIR
+const int buttonPin = 2; 
+
+//Variable que almacenara el estado del sensor de presencia
+int buttonState = 0;
+
+
+
+  void setup()
+  {
+    //Inicializamos la comunicacion serial 
+    Serial.begin(9600);
+
+    //Activamos la comunicacion por IR
+    irrecv.enableIRIn();
+
+    //Inicializamos como salida todos los pines del arduino donde se conectaran los leds
+    pinMode(3, OUTPUT);  
+    pinMode(4, OUTPUT);
+    pinMode(5, OUTPUT);
+    pinMode(6, OUTPUT);
+    pinMode(7, OUTPUT);
+    pinMode(8, OUTPUT);  
+    pinMode(9, OUTPUT);
+    pinMode(10, OUTPUT);
+
+    //Declaramos como entrada el pin donde estara conectado el sensor PIR
+    pinMode(buttonPin, INPUT);   
+  }
+
+
+
+  void loop(){
+     //Si se recibe alguna señal infraroja, se almacena en la variable aux.
+     if (irrecv.decode(&resultados)){
+     aux = resultados.value;
+     //Si hay una señal se envia al metodo menu y dependiendo del valor de esta se ejecutara una opcion
+     menu(aux);
+     //Hacemos una pausa para recibir otra señal IR
+     irrecv.resume();
+     }  
+  }
+  
+  
+  //Metodo que encargara de ejecutar una funcion especifica dependiendo del boton oprimido en el control IR
+  void menu(long a){
+
+  //Si se oprime el numero uno se ejecuta el sistema de luces por presencia
+    while(a == 16724175){
+      Serial.println(aux, DEC);
+       pir();
+       
+        if (irrecv.decode(&resultados)){
+          irrecv.resume();
+          delay(200);
+          aux = resultados.value;
+          menu(aux);   
+  }  
+       }
+
+   // Si se oprime el numero dos se activa la alarma de presencia    
+    while(a == 16718055){
+      Serial.println(aux, DEC);
+      alarma();
+      if (irrecv.decode(&resultados)){
+       irrecv.resume();
+       delay(200);
+       aux = resultados.value;
+       menu(aux);
+     
+     
+     
+  }  
+      }
+
+
+    //Si se oprime el numero tres, se enciende el primer led
+    while(a == 16743045){
+      Serial.println(aux, DEC);
+      primer();
+      if (irrecv.decode(&resultados)){
+        irrecv.resume();
+         delay(200);
+    aux = resultados.value;
+    menu(aux);
+     
+     
+     
+  }  
+      }
+
+       //Si se oprime el numero cuatro, se enciende el segundo led
+      
+      while(a == 16716015){
+        segundo();
+        Serial.println(aux, DEC);
+        if (irrecv.decode(&resultados)){
+        irrecv.resume();
+         delay(200);
+    aux = resultados.value;
+    menu(aux);
+     
+     
+     
+  }  
+        }
+
+
+     //Si se oprime el numero cinco, se enciende el tercer led 
+     while(a == 16726215){
+        tercero();
+        Serial.println(aux, DEC);
+        if (irrecv.decode(&resultados)){
+        irrecv.resume();
+         delay(200);
+    aux = resultados.value;
+    menu(aux);
+     
+     
+     
+  }  
+        }
+        
+
+
+     //Si se oprimer el numero seis, se enciende el cuarto led   
+        while(a == 16734885){
+        cuarto();
+        Serial.println(aux, DEC);
+        if (irrecv.decode(&resultados)){
+        irrecv.resume();
+         delay(200);
+    aux = resultados.value;
+    menu(aux);
+     
+     
+     
+  }  
+        }
+        
+    //Si se oprime el numero siete, se enciende el quinto led    
+        while(a == 16728765){
+        quinto();
+        Serial.println(aux, DEC);
+        if (irrecv.decode(&resultados)){
+        irrecv.resume();
+         delay(200);
+    aux = resultados.value;
+    menu(aux);
+     
+     
+     
+  }  
+        }
+        
+        //Si se oprime el numero ocho, se enciende el sexto led
+        while(a == 16730805){
+        sexto();
+        Serial.println(aux, DEC);
+        if (irrecv.decode(&resultados)){
+        irrecv.resume();
+         delay(200);
+    aux = resultados.value;
+    menu(aux);
+     
+     
+     
+  }  
+        }
+        
+        //Si se oprime el numero nueve, se apagan todos los leds
+        while(a == 16732845){
+        apagado();
+        Serial.println(aux, DEC);
+        if (irrecv.decode(&resultados)){
+        irrecv.resume();
+         delay(200);
+    aux = resultados.value;
+    menu(aux);
+     
+     
+     
+  }  
+        }
+        
+    //Al oprimir el numero 0 se activa el sensor de iluminacion    
+        while(a == 16738455){
+        luz();
+        Serial.println(aux, DEC);
+        if (irrecv.decode(&resultados)){
+        irrecv.resume();
+         delay(200);
+    aux = resultados.value;
+    menu(aux);
+     
+     
+     
+  }  
+        }
+    
+    }
+
+
+
+ //Metodos que realizan cada unas de las funciones en la maqueta mencionados anteriormente-------------------------------------------
+  
+
+
+ //Metodo para pagar los leds
+  void apagado(){
+   
+    for (int k =3 ; k <=8 ; k++)
+    digitalWrite(k, LOW);
+                         
+    }
+
+
+
+ //Metodo para activar el sensor de presencia 
+  void pir(){
+   buttonState = digitalRead(buttonPin);
+  if (buttonState == HIGH) {     
+    digitalWrite(3, HIGH);
+    digitalWrite(4, HIGH);
+    digitalWrite(5, HIGH);
+    digitalWrite(6, HIGH);
+    digitalWrite(7, HIGH);
+    digitalWrite(8, HIGH); 
+    //digitalWrite(9, HIGH); 
+  } 
+  else {
+    digitalWrite(3, LOW);
+    digitalWrite(4, LOW);
+    digitalWrite(5, LOW);
+    digitalWrite(6, LOW);
+    digitalWrite(7, LOW);
+    digitalWrite(8, LOW);
+    //digitalWrite(9, LOW);
+  }
+  delay(500);
+    }
+      
+  
+
+  //Metodos para prender cada unos de los leds independientemente 
+  void primer(){
+  digitalWrite(3, HIGH);
+  
+  }  
+  
+   void segundo(){
+  digitalWrite(4, HIGH);
+  
+  } 
+    
+  void tercero(){
+  digitalWrite(5, HIGH);
+  
+  } 
+  
+  void cuarto(){
+  digitalWrite(6, HIGH);
+  
+  } 
+  
+  void quinto(){
+  digitalWrite(7, HIGH);
+  
+  } 
+  
+  void sexto(){
+  digitalWrite(8, HIGH);
+  
+  } 
+
+  
+
+//Metodo que se encarga de activar la alarma usando el sensor pir y el buzer
+void alarma(){
+    buttonState = digitalRead(buttonPin);
+     if (buttonState == HIGH) { 
+     for (int k =3 ; k <=9 ; k++)
+     digitalWrite(k, HIGH);
+     delay(200);
+     for (int k =3 ; k <=9 ; k++)
+     digitalWrite(k, LOW);
+     delay(200);
+     for (int k =3 ; k <=9 ; k++)
+     digitalWrite(k, HIGH);
+     delay(200);
+     for (int k =3 ; k <=9 ; k++)
+     digitalWrite(k, LOW);
+     delay(200);
+     for (int k =3 ; k <=9 ; k++)
+     digitalWrite(k, HIGH);
+     delay(200);
+     for (int k =3 ; k <=9 ; k++)
+     digitalWrite(k, LOW);
+     delay(200);
+      } 
+      else {
+            digitalWrite(3, LOW);
+    digitalWrite(4, LOW);
+    digitalWrite(5, LOW);
+    digitalWrite(6, LOW);
+    digitalWrite(7, LOW);
+    digitalWrite(8, LOW);
+    digitalWrite(9, LOW);
+      }  
+      delay(200);
+  }
+  
+  
+
+  //Metodo para activar el sensor de iluminacion
+  void luz(){
+    valorLDR= analogRead(pinLDR);
+    Serial.println(valorLDR);
+    if(valorLDR < 100){
+      
+      for (int k =3 ; k <=8 ; k++)
+     digitalWrite(k, HIGH);
+    
+    }else {
+      for (int k =3 ; k <=8 ; k++)
+     digitalWrite(k, LOW);
+      
+      }
+  
+  }
